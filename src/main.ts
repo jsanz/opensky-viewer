@@ -4,9 +4,14 @@ import { NestFactory } from '@nestjs/core';
 import { Module } from '@nestjs/common';
 import { AirportsService, PositionsService } from 'src/services';
 import { PositionsController, AirportsController } from 'src/controllers';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
-  imports: [],
+  imports: [ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'client'),
+    }),
+  ],
   controllers: [PositionsController, AirportsController],
   providers: [AirportsService, PositionsService],
 })

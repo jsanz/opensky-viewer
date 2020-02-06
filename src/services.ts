@@ -19,10 +19,10 @@ const getAggFlight = function(buckets): FeatureCollection {
 
     const timePosition = source.sort[0];
     const props = source._source;
-
+    const [lat, lon] = source.fields.location[0].split(',').map(Number.parseFloat);
     const geometry = {
       type: 'Point',
-      coordinates: source.fields.location,
+      coordinates: [lon, lat],
     };
 
     const properties = {
