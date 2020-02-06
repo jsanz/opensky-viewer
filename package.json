@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:backend": "cd backend && npm install && npm run build",
     "build:frontend": "cd frontend && npm install && npm run build",
-    "prestart": "npm run 'build:backend' && npm run 'build:frontend'",
+    "prestart": "npm run 'build:backend'",
     "start": "cd backend && npm start",
     "start:dev": "concurrently \"cd frontend && npm run start:dev\" \"cd backend && npm run start:dev\""
   },
