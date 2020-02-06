@@ -22,7 +22,7 @@ const App = () => (
       <EuiPageHeader>
         <EuiPageHeaderSection>
           <EuiTitle size="l">
-            <h1>Page title</h1>
+            <h1>Open Sky</h1>
           </EuiTitle>
         </EuiPageHeaderSection>
         <EuiPageHeaderSection>Page abilities</EuiPageHeaderSection>
