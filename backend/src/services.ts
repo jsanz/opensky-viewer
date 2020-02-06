@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { Client, ApiResponse } from '@elastic/elasticsearch';
-import { Point, Feature, FeatureCollection } from 'geojson';
+import { Feature, FeatureCollection } from 'geojson';
 
 import { elasticConfig, indices } from './config';
-import { GeoPointType } from './enums';
 
 const esClient = new Client(elasticConfig);
 
@@ -46,6 +45,42 @@ const getAggFlight = function(buckets): FeatureCollection {
 
 @Injectable()
 export class PositionsService {
+  async getLastPosition(): Promise<Feature> {
+    const { indexPattern } = indices.flightTracking;
+    const results: ApiResponse = await esClient.search({
+      index: indexPattern,
+      body:{
+        "size": 1,
+        "query": {
+          "match_all": {}
+        }
+        , "sort": [
+          {
+            "timePosition": {
+              "order": "desc"
+            }
+          }
+        ]
+      }
+    });
+
+    if (results.statusCode == 200) {
+      const result = results.body.hits.hits[0];
+      const {lat, lon} = result._source.location;
+      return {
+        type: 'Feature',
+        geometry: {
+          type: 'Point',
+          coordinates: [lon, lat]
+        },
+        properties: result._source
+      }
+    } else {
+      throw new Error('Something happened retrieving the count');
+    }
+
+  };
+
   async getTotalCount(): Promise<number> {
     const { indexPattern } = indices.flightTracking;
     const results: ApiResponse = await esClient.count({
@@ -78,7 +113,7 @@ export class AirportsService {
     Get all airports as a GeoJSON Feature Collection
     */
   async getAirports(): Promise<FeatureCollection> {
-    const { indexPattern, fields, geoField, geoType } = indices.airports;
+    const { indexPattern, fields, geoField } = indices.airports;
     const results: ApiResponse = await esClient.search({
       index: indexPattern,
       size: 10000,

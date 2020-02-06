@@ -1,5 +1,4 @@
-import { Controller, Get, Req } from '@nestjs/common';
-import { Request } from 'express';
+import { Controller, Get} from '@nestjs/common';
 import { AirportsService, PositionsService } from './services'
 import { FeatureCollection } from 'geojson';
 
@@ -9,6 +8,11 @@ export class PositionsController {
     @Get('count/all')
     getAll(){
         return this.service.getTotalCount();
+    }
+
+    @Get('last/feature')
+    getLastPosition(){
+        return this.service.getLastPosition();
     }
 
     @Get('last/geojson')
