@@ -1,47 +1,37 @@
 import React from "react";
 import { render } from "react-dom";
+import { OpenSkyMap } from "./map"
 
-import { 
+import {
   EuiPage,
   EuiPageBody,
   EuiPageContent,
-  EuiPageContentBody,
-  EuiPageContentHeader,
-  EuiPageContentHeaderSection,
   EuiPageHeader,
   EuiPageHeaderSection,
   EuiPageSideBar,
-  EuiTitle, } from "@elastic/eui";
+  EuiTitle
+} from "@elastic/eui";
 
-import '@elastic/eui/dist/eui_theme_dark.css';
+import "@elastic/eui/dist/eui_theme_dark.css";
+import "./index.scss";
 
 const App = () => (
-  <EuiPage>
-    <EuiPageSideBar>SideBar nav</EuiPageSideBar>
-    <EuiPageBody>
-      <EuiPageHeader>
-        <EuiPageHeaderSection>
-          <EuiTitle size="l">
-            <h1>Open Sky</h1>
-          </EuiTitle>
-        </EuiPageHeaderSection>
-        <EuiPageHeaderSection>Page abilities</EuiPageHeaderSection>
-      </EuiPageHeader>
-      <EuiPageContent>
-        <EuiPageContentHeader>
-          <EuiPageContentHeaderSection>
-            <EuiTitle>
-              <h2>Content title</h2>
+    <EuiPage>
+      <EuiPageSideBar>
+        <EuiPageHeader>
+          <EuiPageHeaderSection>
+            <EuiTitle size="l">
+              <h1>Open Sky</h1>
             </EuiTitle>
-          </EuiPageContentHeaderSection>
-          <EuiPageContentHeaderSection>
-            Content abilities
-          </EuiPageContentHeaderSection>
-        </EuiPageContentHeader>
-        <EuiPageContentBody>Content body</EuiPageContentBody>
-      </EuiPageContent>
-    </EuiPageBody>
-  </EuiPage>
+          </EuiPageHeaderSection>
+        </EuiPageHeader>
+      </EuiPageSideBar>
+      <EuiPageBody>
+        <EuiPageContent>
+          <OpenSkyMap />
+        </EuiPageContent>
+      </EuiPageBody>
+    </EuiPage>
 );
 
 render(<App />, document.getElementById("root"));
