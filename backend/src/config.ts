@@ -1,15 +1,24 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import { GeoPointType } from './enums';
 
-const elasticConfig = {
-  cloud: {
+const elasticConfig = {};
+
+if (process.env.ELASTIC_CLOUD_ID){
+  elasticConfig['cloud'] = {
     id: process.env.ELASTIC_CLOUD_ID
-  },
-  auth: {
+  }
+} else {
+  elasticConfig['node'] = process.env.ELASTIC_HOST
+};
+
+if (process.env.ELASTIC_USER && process.env.ELASTIC_PASSWORD) {
+  elasticConfig['auth'] = {
     username: process.env.ELASTIC_USER,
     password: process.env.ELASTIC_PASSWORD,
-  },
-};
+  }
+}
+console.log(elasticConfig);
+
 const indices = {
   flightTracking: {
     indexPattern: 'flight_tracking*',
