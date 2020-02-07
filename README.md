@@ -1,6 +1,6 @@
 # OpenSky viewer example
 
-Example application that provides a simple API to query a Elasticsearch cluster, and a web viewer to render two layers on a map. The application is split into front and backend subprojects:
+Example application that provides a simple API to query a Elasticsearch cluster, and a web viewer to render two layers on a map. The application is split into front and back-end subprojects:
 
 * `backend`: [NestJS](https://nestjs.com/) project with [controllers](./backend/src/controllers.ts) and [service](./backend/src/services.ts) logic separated. Configuration to connect to the Elastic cluster is located at [`config.ts`](./backend/src/config.ts). Using environment variables or an `.env` file you can run the application against [Elastic Cloud](https://cloud.elastic.co/) or any host. Adapting this to other configurations would need to tweak the `config.ts` file according to [the docs](https://www.elastic.co/guide/en/elasticsearch/client/javascript-api/current/client-configuration.html).
 
@@ -16,13 +16,13 @@ Example application that provides a simple API to query a Elasticsearch cluster,
 
 ## Elastic data
 
-The backend asumes the following indices in your cluster:
+The backend assumes the following indices in your cluster:
 
 * `airports`: an index with the airports of the world. You can use Elastic Maps GeoJSON Upload to push [this file](https://github.com/jsanz/wecode20/blob/master/lab/airports/airports.geo.json) or find your way to upload the original dataset from [Natural Earth](https://www.naturalearthdata.com/downloads/10m-cultural-vectors/airports/).
 * `flight_tracking*`: one or more indexes with flight positions imported from the OpenSky network. You can upload data in realtime or do a one-off with the scripts provided all in [this folder](https://github.com/jsanz/wecode20/tree/master/lab/opensky-loader).
 
 ## Deploy
 
-Check the different `package.json` scripts to see how the frontend is built and then `backend` statically mounts the resulting `/frontend/build` folder as its root.
+Check the different `package.json` scripts to see how the front-end is built and then `backend` statically mounts the resulting `/frontend/build` folder as its root.
 
 The [`package.json`](./package.json) and [`Procfile`](./Procfile) allow to deploy this project to [Heroku](https://www.heroku.com/), but any other NodeJS compatible PaaS should work as well.
