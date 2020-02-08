@@ -46,8 +46,8 @@ interface OpenSkyMapState {
   totalCount: number;
 }
 
-const BACKEND_URL = "http://localhost:3000";
-//const BACKEND_URL = "";
+//const BACKEND_URL = "http://localhost:3000";
+const BACKEND_URL = "";
 const AIRPORTS_URL = BACKEND_URL + "/airports/geojson";
 const POSITIONS_URL = BACKEND_URL + "/positions/last/geojson";
 const LAST_FEATURE_URL = BACKEND_URL + "/positions/last/feature";
