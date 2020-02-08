@@ -17,7 +17,6 @@ if (process.env.ELASTIC_USER && process.env.ELASTIC_PASSWORD) {
     password: process.env.ELASTIC_PASSWORD,
   }
 }
-console.log(elasticConfig);
 
 const indices = {
   flightTracking: {

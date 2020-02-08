@@ -44,6 +44,7 @@
     ]
   },
   "devDependencies": {
+    "@types/geojson": "^7946.0.7",
     "@types/mapbox-gl": "^1.7.0",
     "@types/prop-types": "^15.7.3",
     "nodemon": "^2.0.2"
