@@ -17,12 +17,13 @@ import {
   EuiTextColor
 } from "@elastic/eui";
 
-import { Feature } from "geojson";
+import { Feature, Point } from "geojson";
 import {
   Map,
   NavigationControl,
   FullscreenControl,
-  GeoJSONSource
+  GeoJSONSource,
+  Popup
 } from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 
@@ -33,13 +34,20 @@ interface OpenSkyFeature {
   timePosition: Date;
   velocity: number;
 }
+
+interface AirportFeature {
+  abbrev: string;
+  name: string;
+  type: string;
+}
 interface OpenSkyMapState {
   map: Map;
   lastFeature: OpenSkyFeature;
   totalCount: number;
 }
 
-const BACKEND_URL = "";
+const BACKEND_URL = "http://localhost:3000";
+//const BACKEND_URL = "";
 const AIRPORTS_URL = BACKEND_URL + "/airports/geojson";
 const POSITIONS_URL = BACKEND_URL + "/positions/last/geojson";
 const LAST_FEATURE_URL = BACKEND_URL + "/positions/last/feature";
@@ -85,16 +93,27 @@ export class OpenSkyMap extends React.Component<{}, OpenSkyMapState> {
     }
   }
 
-  getFormatedTime(date: Date) {
-    return `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+  formatTime(date: Date) {
+    return new Intl.DateTimeFormat('en-EN',{
+      hour: 'numeric', minute: 'numeric', second: 'numeric', 
+      timeZone: 'UTC',
+      timeZoneName: 'short'
+    }).format(date);
   }
+
+  formatNumber(number: number){
+    return new Intl.NumberFormat('en-EN').format(number);
+  }
+
+
 
   componentDidMount() {
     const map = new Map({
       container: "map",
-      style: "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
+      style: "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json",
       center: [25, 30],
-      zoom: 3
+      zoom: 3,
+      hash: true
     });
 
     const nav = new NavigationControl();
@@ -118,7 +137,14 @@ export class OpenSkyMap extends React.Component<{}, OpenSkyMapState> {
         source: "positions",
         paint: {
           "circle-color": "#017D73",
-          "circle-radius": 3
+          "circle-radius":  {
+            stops: [
+              [0, 0],
+              [2, 3],
+              [5, 4],
+              [7, 10]
+            ]
+          }
         }
       });
       map.addLayer({
@@ -126,9 +152,9 @@ export class OpenSkyMap extends React.Component<{}, OpenSkyMapState> {
         type: "symbol",
         source: "positions",
         paint: {
-          "text-color": "#017D73",
+          "text-color": "white",
           "text-halo-width": 2,
-          "text-halo-color": "white"
+          "text-halo-color": "#017D73"
         },
         layout: {
           "text-field": ["get", "callsign"],
@@ -151,7 +177,14 @@ export class OpenSkyMap extends React.Component<{}, OpenSkyMapState> {
         source: "airports",
         paint: {
           "circle-color": "#DD0A73",
-          "circle-radius": 5
+          "circle-radius":  {
+            stops: [
+              [0, 2],
+              [2, 5],
+              [5, 6],
+              [7, 14]
+            ]
+          }
         }
       });
       map.addLayer({
@@ -167,8 +200,94 @@ export class OpenSkyMap extends React.Component<{}, OpenSkyMapState> {
           "text-field": ["get", "abbrev"],
           "text-font": ["Open Sans Semibold", "Arial Unicode MS Bold"],
           "text-offset": [0, 0.6],
-          "text-anchor": "top"
+          "text-anchor": "top",
+          "text-size": {
+            stops: [
+              [0, 0],
+              [2, 7],
+              [4, 12]
+            ]
+          }
         }
+      });
+
+      // Create a popup, but don't add it to the map yet.
+      const popup = new Popup({
+        closeButton: false,
+        closeOnClick: false
+      });
+
+      map.on("mouseenter", "positions-circles", function(e) {
+        // Change the cursor style as a UI indicator.
+        map.getCanvas().style.cursor = "pointer";
+
+        if (e && e.features && e.features.length > 0) {
+          const feature: Feature = e.features[0];
+
+          const coordinates = (feature.geometry as Point).coordinates.slice();
+          const {callsign, originCountry, velocity, geoAltitude } = feature.properties as OpenSkyFeature;
+          const description = `
+          <div class="positions">
+          <h3>Callsign: ${callsign}</h3>
+          <p>
+          Country: ${originCountry}<br/>
+          Speed: ${velocity}<br/>
+          Altitude: ${geoAltitude}
+          </p>
+          </div>
+          `;
+
+          while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+            coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+          }
+
+          // Populate the popup and set its coordinates
+          // based on the feature found.
+          popup.setLngLat({
+              lon: coordinates[0],
+              lat: coordinates[1]
+            }).setHTML(description)
+              .addTo(map);
+        }
+      });
+
+      map.on("mouseenter", "airports-circles", function(e) {
+        // Change the cursor style as a UI indicator.
+        map.getCanvas().style.cursor = "pointer";
+
+        if (e && e.features && e.features.length > 0) {
+          const feature: Feature = e.features[0];
+
+          const coordinates = (feature.geometry as Point).coordinates.slice();
+          const { name, abbrev, type} = feature.properties as AirportFeature;
+          const description = `
+          <div class="airports">
+          <h3>${name} (${abbrev})</h3>
+          <p>Type: ${type}</p>
+          </div>
+          `;
+
+          while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+            coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+          }
+
+          // Populate the popup and set its coordinates
+          // based on the feature found.
+          popup.setLngLat({
+              lon: coordinates[0],
+              lat: coordinates[1]
+            }).setHTML(description)
+              .addTo(map);
+        }
+      });
+
+      map.on("mouseleave", "positions-circles", function() {
+        map.getCanvas().style.cursor = "";
+        popup.remove();
+      });
+      map.on("mouseleave", "airports-circles", function() {
+        map.getCanvas().style.cursor = "";
+        popup.remove();
       });
     });
 
@@ -226,7 +345,7 @@ export class OpenSkyMap extends React.Component<{}, OpenSkyMapState> {
                     Position time
                   </EuiDescriptionListTitle>
                   <EuiDescriptionListDescription>
-                    {this.getFormatedTime(this.state.lastFeature.timePosition)}
+                    {this.formatTime(this.state.lastFeature.timePosition)}
                   </EuiDescriptionListDescription>
                 </EuiDescriptionList>
               )}
@@ -239,7 +358,7 @@ export class OpenSkyMap extends React.Component<{}, OpenSkyMapState> {
                     <EuiTextColor color="accent">Positions count:</EuiTextColor>
                   </h2>
                 </EuiTitle>
-                <p>{this.state.totalCount}</p>
+                <p>{this.formatNumber(this.state.totalCount)}</p>
               </EuiFlexItem>
             )}
             <EuiFlexItem>

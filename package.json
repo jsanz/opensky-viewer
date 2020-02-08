@@ -9,7 +9,7 @@
     "build:frontend": "cd frontend && npm install && npm run build",
     "build": "npm run 'build:backend' && npm run 'build:frontend'",
     "start": "cd backend && npm start",
-    "start:dev": "concurrently \"cd frontend && npm run start:dev\" \"cd backend && npm run start:dev\""
+    "start:dev": "concurrently \"cd frontend &&PORT=3001  npm run start\" \"cd backend &&PORT=3000 npm run start:dev\""
   },
   "keywords": [],
   "author": "",

@@ -16,8 +16,10 @@ export class PositionsController {
     }
 
     @Get('last/geojson')
-    getLastPositionsAsGeoJSON(){
-        return this.service.getAllLastPositions();
+    async getLastPositionsAsGeoJSON(){
+        const positions = await this.service.getAllLastPositions();
+        console.log('Last positions: ', positions.features.length) 
+        return positions;
     }
 }
 
