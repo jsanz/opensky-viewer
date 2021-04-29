@@ -16,6 +16,6 @@
   "license": "ISC",
   "devDependencies": {
     "concurrently": "^5.1.0",
-     "object-path": ">=0.11.5"
+    "object-path": ">=0.11.5"
   }
 }

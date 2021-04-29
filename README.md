@@ -18,8 +18,8 @@ Example application that provides a simple API to query a Elasticsearch cluster,
 
 The backend assumes the following indices in your cluster:
 
-* `airports`: an index with the airports of the world. You can use Elastic Maps GeoJSON Upload to push [this file](https://github.com/jsanz/wecode20/blob/master/lab/airports/airports.geo.json) or find your way to upload the original dataset from [Natural Earth](https://www.naturalearthdata.com/downloads/10m-cultural-vectors/airports/).
-* `flight_tracking*`: one or more indexes with flight positions imported from the OpenSky network. You can upload data in realtime or do a one-off with the scripts provided all in [this folder](https://github.com/jsanz/wecode20/tree/master/lab/opensky-loader).
+* `airports`: an index with the airports of the world. You can use Elastic Maps GeoJSON Upload to push [this file](https://github.com/jsanz/elastic-workshop/blob/master/lab/airports/airports.geo.json) or find your way to upload the original dataset from [Natural Earth](https://www.naturalearthdata.com/downloads/10m-cultural-vectors/airports/).
+* `flight_tracking*`: one or more indexes with flight positions imported from the OpenSky network. You can upload data in realtime or do a one-off with the scripts provided all in [this folder](https://github.com/jsanz/elastic-workshop/tree/master/lab/opensky-loader).
 
 ## Deploy
 
